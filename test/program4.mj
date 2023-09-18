@@ -1,0 +1,62 @@
+// Test301
+
+program test301
+
+	const int nula = 0;
+	const int jedan = 1;
+	const int pet = 5;
+
+	int niz[];
+	char nizch[];
+	
+{
+	void main()	
+		int bodovi;
+		bool bt;
+	{
+		bodovi = 0;
+		bodovi++;                  //bodovi=1
+		bodovi = bodovi + jedan;   //bodovi=2
+		bodovi = bodovi * pet;     //bodovi=10
+		bodovi--;				   //bodovi=9
+		print(bodovi); 			   //9     --->tacno
+			
+		
+		niz = new int[3];
+		niz[nula] = jedan;         //niz[0]=1
+		niz[1] = 2;				   //niz[1]=2
+		niz[niz[jedan]] = niz[niz[0]] * 3;  //niz[2]=6
+		bodovi = niz[2]/niz[0];    //bodovi=6
+		print(bodovi);             //6		--->tacno
+		print(niz[2]);			   //6		--->tacno
+		
+		
+		nizch = new char[3];
+		nizch[0] = 'a';
+		nizch[jedan] = 'b';
+		nizch[pet - 3] = 'c';
+		print(nizch[1]);
+		print(nizch[jedan * 2]);     //bc  --->tacno
+			
+		
+		bodovi = bodovi + (pet * jedan - 1) * bodovi - (3 % 2 + 3 * 2 - 3);   //6+4*6-(1+6-3)=30-(4)=26
+		print(bodovi);              //26  --->tacno
+			
+		//read(bodovi);
+		bt = true;                  
+		
+		if(bt) {
+			print(bodovi);       //26    --->tacno
+		} else {
+			print(bodovi + 10);
+		}
+		
+		if(bodovi > 10) {
+			print('*');          //*    --->tacno
+		} else {
+			print('-');
+		}
+	}
+}
+
+

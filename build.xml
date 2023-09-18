@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="P5_jun" default="compile" basedir=".">
+	<!--Mi zelimo da razdvojimo ranovanje(tj testiranje) i buildovanje, tako da ovaj 
+	build script ce sluyiti samo za dovodjenje nase aplikacije u stanje testiranja-->
+
+
+
+	<!--Zelim da svaki put prilikom novog izvrsavanja generisane klase od proslog 
+	puta budu obrisane  -->
+	<target name="delete">
+		<delete>
+			<fileset dir="src/rs/ac/bg/etf/pp1">
+				<exclude name="sym_novo.java" />
+				<exclude name="Yylex.java" />
+				<exclude name="RuleVisitor.java" />
+				<exclude name="util/Log4JUtils.java" />
+				<exclude name="SemanticCheck.java" />
+				<exclude name="Tab2.java" />
+				<exclude name="CodeGenerator.java"/>
+				<exclude name="PozicijaLista.java"/>
+				<exclude name="IFLista.java"/>
+				<exclude name="ElseLista.java"/>
+				<exclude name="DSTV.java" />
+			</fileset>
+		</delete>
+		<delete>
+			<fileset dir="spec">
+				<exclude name="mjlexer.flex" />
+				<exclude name="mjparser.cup" />
+			</fileset>
+		</delete>
+	</target>
+
+	<!--Mi smo napisali nasu specifikaciju mjlexer.flex i ukljucili smo generator
+	 jFlex. Sada zelimo da uz pomoc generatora zelimo da izgenerisemo nasu java 
+	 implementaciju naseg analizatora-->
+	<target name="lexerGen" depends="delete">
+		<java jar="lib/JFlex.jar" fork="true">
+			<!--treba da prosledimo putanju do ove specifikaciju koju smo napisali
+			jer nas generator uz pomoc nje generise nasu java implementaciju. Na 
+			osnovu ovoga dobijamo Yylex.java klasu-->
+			<arg value="-d" />
+			<arg value="./src/rs/ac/bg/etf/pp1" />
+			<arg value="spec/mjlexer.flex" />
+		</java>
+	</target>
+
+	<target name="parserGen" depends="delete">
+		<java jar="lib/cup_v10k.jar" fork="true">
+			<arg value="-destdir" />
+			<arg value="src/rs/ac/bg/etf/pp1" />
+			<arg value="-ast" />
+			<arg value="src.rs.ac.bg.etf.pp1.ast" />
+			<arg value="-parser" />
+			<arg value="MJParser" />
+			<arg value="-buildtree" />
+			<!--<arg value="-dump_states"/> -->
+			<arg value="spec/mjparser.cup" />
+		</java>
+	</target>
+
+	<target name="repackage" depends="parserGen">
+		<!-- Replaces all of the references to the old package name is files in the "src" directory -->
+		<replace dir="src" value="rs.ac.bg.etf.pp1.ast" token="src.rs.ac.bg.etf.pp1.ast" summary="true" />
+	</target>
+
+	<!--Sledece sto elim je kompajliranje nasih java fajlova.Zelim da mi se iy ovog 
+	foldera iskompajliraju sve java klase.-->
+	<target name="compile" depends="repackage">
+		<javac srcdir="src/rs/ac/bg/etf/pp1" includeantruntime="false">
+			<classpath>
+				<pathelement path="lib/JFlex.jar" />
+				<pathelement path="lib/cup_v10k.jar" />
+				<pathelement path="lib/log4j-1.2.17.jar" />
+				<pathelement path="lib/symboltable.jar" />
+				<pathelement path="lib/mj-runtime.jar" />
+			</classpath>
+		</javac>
+	</target>
+	
+	<!-- **********************************************************************  -->
+	<target name="disasm">
+			<java classname="rs.etf.pp1.mj.runtime.disasm">
+				<arg value="test/program.obj" />
+				<classpath>
+					<pathelement location="lib/mj-runtime.jar" />
+				</classpath>
+			</java>
+		</target>
+		<target name="runObj" depends="disasm">
+			<java classname="rs.etf.pp1.mj.runtime.Run">
+				<arg value="test/program.obj" />
+				<classpath>
+					<pathelement location="lib/mj-runtime.jar" />
+				</classpath>
+			</java>
+		</target>
+		<target name="debugObj" depends="disasm">
+				<java classname="rs.etf.pp1.mj.runtime.Run">
+					<arg value="test/program.obj" />
+					<arg value="-debug" />
+					<classpath>
+						<pathelement location="lib/mj-runtime.jar" />
+					</classpath>
+				</java>
+			</target>
+
+</project>

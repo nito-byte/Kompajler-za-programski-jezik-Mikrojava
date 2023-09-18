@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+   <!-- Apender je apstrakcija objekta koji moze da ispise poruke na neki medij. 
+   Imamo apender koji ispisuje sadrzaj u konzolu, a imamo apender koji salje sadrzaj
+   u fajl koji cemo smestiti u folder logs i nayvati ga mj.log. -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p %d{ABSOLUTE} - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="logs/mj.log"></param>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p %d{ABSOLUTE} - %m%n"></param>
+		</layout>
+	</appender>
+	
+	<root>
+		<priority value="debug" />
+		<appender-ref ref="file" />
+		<appender-ref ref="console" />
+	</root>
+
+</log4j:configuration>  

@@ -1,0 +1,307 @@
+INFO  22:25:00,542 - Compiling source file: C:\Users\tijana.djokic\Desktop\P1\MJCompilerNovo2\test\program.mj
+INFO  22:25:00,548 - #2 program
+INFO  22:25:00,548 - #40 MJProgram
+INFO  22:25:00,548 - #40 int
+INFO  22:25:00,548 - #40 a
+INFO  22:25:00,548 - #8 ;
+INFO  22:25:00,548 - #40 int
+INFO  22:25:00,548 - #40 b
+INFO  22:25:00,548 - #8 ;
+INFO  22:25:00,548 - #40 char
+INFO  22:25:00,548 - #40 c
+INFO  22:25:00,548 - #8 ;
+INFO  22:25:00,549 - #12 {
+INFO  22:25:00,549 - #6 void
+INFO  22:25:00,549 - #40 main
+INFO  22:25:00,549 - #10 (
+INFO  22:25:00,549 - #11 )
+INFO  22:25:00,549 - #12 {
+INFO  22:25:00,549 - #40 a
+INFO  22:25:00,549 - #29 =
+INFO  22:25:00,549 - #40 a
+INFO  22:25:00,549 - #22 +
+INFO  22:25:00,549 - #41 1
+INFO  22:25:00,551 - #8 ;
+INFO  22:25:00,551 - #40 b
+INFO  22:25:00,551 - #29 =
+INFO  22:25:00,551 - #41 1
+INFO  22:25:00,551 - #8 ;
+INFO  22:25:00,551 - #40 b
+INFO  22:25:00,551 - #29 =
+INFO  22:25:00,551 - #41 2
+INFO  22:25:00,551 - #8 ;
+INFO  22:25:00,551 - #40 c
+INFO  22:25:00,551 - #29 =
+INFO  22:25:00,551 - #41 1
+INFO  22:25:00,551 - #8 ;
+INFO  22:25:00,551 - #40 c
+INFO  22:25:00,551 - #29 =
+INFO  22:25:00,552 - #41 1
+INFO  22:25:00,552 - #8 ;
+INFO  22:25:00,552 - #40 c
+INFO  22:25:00,552 - #29 =
+INFO  22:25:00,552 - #41 1
+INFO  22:25:00,552 - #8 ;
+INFO  22:25:00,552 - #13 }
+INFO  22:25:00,552 - #13 }
+INFO  22:25:00,553 - Compiling source file: C:\Users\tijana.djokic\Desktop\P1\MJCompilerNovo2\test\program.mj
+INFO  22:25:00,640 - #2 program
+INFO  22:25:00,640 - #40 MJProgram
+INFO  22:25:00,640 - #40 int
+INFO  22:25:00,642 - #40 a
+INFO  22:25:00,642 - #8 ;
+INFO  22:25:00,643 - #40 int
+INFO  22:25:00,643 - #40 b
+INFO  22:25:00,643 - #8 ;
+INFO  22:25:00,643 - #40 char
+INFO  22:25:00,643 - #40 c
+INFO  22:25:00,644 - #8 ;
+INFO  22:25:00,644 - #12 {
+INFO  22:25:00,644 - #6 void
+INFO  22:25:00,646 - #40 main
+INFO  22:25:00,648 - #10 (
+INFO  22:25:00,651 - #11 )
+INFO  22:25:00,652 - #12 {
+INFO  22:25:00,653 - #40 a
+INFO  22:25:00,654 - #29 =
+INFO  22:25:00,655 - #40 a
+INFO  22:25:00,660 - #22 +
+INFO  22:25:00,661 - #41 1
+INFO  22:25:00,664 - #8 ;
+INFO  22:25:00,666 - #40 b
+INFO  22:25:00,666 - #29 =
+INFO  22:25:00,666 - #41 1
+INFO  22:25:00,666 - #8 ;
+INFO  22:25:00,666 - #40 b
+INFO  22:25:00,666 - #29 =
+INFO  22:25:00,666 - #41 2
+INFO  22:25:00,666 - #8 ;
+INFO  22:25:00,666 - #40 c
+INFO  22:25:00,666 - #29 =
+INFO  22:25:00,666 - #41 1
+INFO  22:25:00,666 - #8 ;
+INFO  22:25:00,667 - #40 c
+INFO  22:25:00,667 - #29 =
+INFO  22:25:00,667 - #41 1
+INFO  22:25:00,667 - #8 ;
+INFO  22:25:00,667 - #40 c
+INFO  22:25:00,667 - #29 =
+INFO  22:25:00,667 - #41 1
+INFO  22:25:00,667 - #8 ;
+INFO  22:25:00,667 - #13 }
+INFO  22:25:00,668 - #13 }
+INFO  22:25:00,671 - Program(
+  ProgramName(
+   MJProgram
+  ) [ProgramName]
+  ProgramDeclListSome(
+    ProgramDeclListSome(
+      ProgramDeclListSome(
+        ProgramDeclListNone(
+        ) [ProgramDeclListNone]
+        ProgramDeclVar(
+          VarDeclaration(
+            TypeIdent(
+             int
+            ) [TypeIdent]
+            VarDeclFormListTwo(
+              VarDeclFormItem(
+               a
+              ) [VarDeclFormItem]
+            ) [VarDeclFormListTwo]
+          ) [VarDeclaration]
+        ) [ProgramDeclVar]
+      ) [ProgramDeclListSome]
+      ProgramDeclVar(
+        VarDeclaration(
+          TypeIdent(
+           int
+          ) [TypeIdent]
+          VarDeclFormListTwo(
+            VarDeclFormItem(
+             b
+            ) [VarDeclFormItem]
+          ) [VarDeclFormListTwo]
+        ) [VarDeclaration]
+      ) [ProgramDeclVar]
+    ) [ProgramDeclListSome]
+    ProgramDeclVar(
+      VarDeclaration(
+        TypeIdent(
+         char
+        ) [TypeIdent]
+        VarDeclFormListTwo(
+          VarDeclFormItem(
+           c
+          ) [VarDeclFormItem]
+        ) [VarDeclFormListTwo]
+      ) [VarDeclaration]
+    ) [ProgramDeclVar]
+  ) [ProgramDeclListSome]
+  MethodDeclListSome(
+    MethodDeclListNone(
+    ) [MethodDeclListNone]
+    MethDeclNoPars(
+      MethodTypeAndName(
+        MethodTypeVOID(
+        ) [MethodTypeVOID]
+       main
+      ) [MethodTypeAndName]
+      VarDeclListDerived2(
+      ) [VarDeclListDerived2]
+      StatementListSome(
+        StatementListSome(
+          StatementListSome(
+            StatementListSome(
+              StatementListSome(
+                StatementListSome(
+                  StatementListNone(
+                  ) [StatementListNone]
+                  StatementMatched(
+                    StatementDesignator(
+                      DesignatorStatement_Assign(
+                        DesignIdentifikator(
+                         a
+                        ) [DesignIdentifikator]
+                        AssignEqual(
+                        ) [AssignEqual]
+                        ExprI(
+                          ExprAddopTerm(
+                            ExprTerm(
+                              TermFactor(
+                                FactorDesignOne(
+                                  DesignIdentifikator(
+                                   a
+                                  ) [DesignIdentifikator]
+                                ) [FactorDesignOne]
+                              ) [TermFactor]
+                            ) [ExprTerm]
+                            AddopPlus(
+                            ) [AddopPlus]
+                            TermFactor(
+                              FactorConstNum(
+                               1
+                              ) [FactorConstNum]
+                            ) [TermFactor]
+                          ) [ExprAddopTerm]
+                        ) [ExprI]
+                      ) [DesignatorStatement_Assign]
+                    ) [StatementDesignator]
+                  ) [StatementMatched]
+                ) [StatementListSome]
+                StatementMatched(
+                  StatementDesignator(
+                    DesignatorStatement_Assign(
+                      DesignIdentifikator(
+                       b
+                      ) [DesignIdentifikator]
+                      AssignEqual(
+                      ) [AssignEqual]
+                      ExprI(
+                        ExprTerm(
+                          TermFactor(
+                            FactorConstNum(
+                             1
+                            ) [FactorConstNum]
+                          ) [TermFactor]
+                        ) [ExprTerm]
+                      ) [ExprI]
+                    ) [DesignatorStatement_Assign]
+                  ) [StatementDesignator]
+                ) [StatementMatched]
+              ) [StatementListSome]
+              StatementMatched(
+                StatementDesignator(
+                  DesignatorStatement_Assign(
+                    DesignIdentifikator(
+                     b
+                    ) [DesignIdentifikator]
+                    AssignEqual(
+                    ) [AssignEqual]
+                    ExprI(
+                      ExprTerm(
+                        TermFactor(
+                          FactorConstNum(
+                           2
+                          ) [FactorConstNum]
+                        ) [TermFactor]
+                      ) [ExprTerm]
+                    ) [ExprI]
+                  ) [DesignatorStatement_Assign]
+                ) [StatementDesignator]
+              ) [StatementMatched]
+            ) [StatementListSome]
+            StatementMatched(
+              StatementDesignator(
+                DesignatorStatement_Assign(
+                  DesignIdentifikator(
+                   c
+                  ) [DesignIdentifikator]
+                  AssignEqual(
+                  ) [AssignEqual]
+                  ExprI(
+                    ExprTerm(
+                      TermFactor(
+                        FactorConstNum(
+                         1
+                        ) [FactorConstNum]
+                      ) [TermFactor]
+                    ) [ExprTerm]
+                  ) [ExprI]
+                ) [DesignatorStatement_Assign]
+              ) [StatementDesignator]
+            ) [StatementMatched]
+          ) [StatementListSome]
+          StatementMatched(
+            StatementDesignator(
+              DesignatorStatement_Assign(
+                DesignIdentifikator(
+                 c
+                ) [DesignIdentifikator]
+                AssignEqual(
+                ) [AssignEqual]
+                ExprI(
+                  ExprTerm(
+                    TermFactor(
+                      FactorConstNum(
+                       1
+                      ) [FactorConstNum]
+                    ) [TermFactor]
+                  ) [ExprTerm]
+                ) [ExprI]
+              ) [DesignatorStatement_Assign]
+            ) [StatementDesignator]
+          ) [StatementMatched]
+        ) [StatementListSome]
+        StatementMatched(
+          StatementDesignator(
+            DesignatorStatement_Assign(
+              DesignIdentifikator(
+               c
+              ) [DesignIdentifikator]
+              AssignEqual(
+              ) [AssignEqual]
+              ExprI(
+                ExprTerm(
+                  TermFactor(
+                    FactorConstNum(
+                     1
+                    ) [FactorConstNum]
+                  ) [TermFactor]
+                ) [ExprTerm]
+              ) [ExprI]
+            ) [DesignatorStatement_Assign]
+          ) [StatementDesignator]
+        ) [StatementMatched]
+      ) [StatementListSome]
+    ) [MethDeclNoPars]
+  ) [MethodDeclListSome]
+) [Program]
+INFO  22:25:00,672 - ===================================
+ERROR 22:25:00,689 - Greska: u assign naredbi nekompatibilni tipovi na liniji 20
+ERROR 22:25:00,689 - Greska: u assign naredbi nekompatibilni tipovi na liniji 21
+ERROR 22:25:00,689 - Greska: u assign naredbi nekompatibilni tipovi na liniji 22
+INFO  22:25:00,689 - Broj simbolickih konstanti je: 0
+INFO  22:25:00,689 - Broj globalnih konstanti je: 0
+INFO  22:25:00,689 - Broj lokalnih promenljivih konstanti je: 0
+INFO  22:25:00,692 - Parsiranje nije uspesno zavrseno!

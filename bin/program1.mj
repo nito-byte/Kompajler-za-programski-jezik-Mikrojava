@@ -1,0 +1,20 @@
+// primer koji sadrzi oporavak od sintaksne greske i leksicke greske 
+// (definicija globalne promenljive, i konstrukcija iskaza dodele - oporavak od greske)
+program MJProgram
+	int x, int y;
+{
+	
+	int k () int c; {
+		c =+1;
+		return c+2;
+	}
+	
+	int# main() {
+		y = 2;
+		x = y + 2;
+		y = k() + 3;
+		print(y);
+		return  0;
+          
+	}
+}

@@ -1,0 +1,24 @@
+// ovo je test primer (jedan mikro java program)
+program MJProgram
+	int a;
+	int b;
+	char c;
+	
+{
+	
+	
+	void main() {
+		//c=2+2+;  //sintaksna greska
+      
+       //a#=0;  //lexicka greska
+       a=a+1;
+       //a=a+;  
+      // a$=1;  //lexicka greska
+      // b=b+;
+       b=1;
+       b=2;
+       c=1;
+       c=1;
+       c=1;
+	}
+}

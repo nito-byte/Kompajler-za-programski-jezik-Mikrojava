@@ -1,0 +1,570 @@
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+
+// import java.io.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+
+/*cilj je da rekonstruisemo apstraktno sintaksno stablo - to je predstavljanje
+  programskog koda u obliku medjukoda. Njega kreira parser i prosledjuje dalje 
+  za obradu.
+
+  gramatika cup specifikacije sadrzi mogucnost da mi svakoj produkciji dodelimo
+  ime koje ce se pri generisanju klasa koristiti kao ime novogenerisane klase.
+
+  parser ce u slucaju greske pokusati da se oporavi od gresaka ako su u specif
+  ugradjene smene za oporavak. Ako nisu parser ce reci da je nastala sintaksna
+  greska od koje ne moze da se oporavi.*/
+
+
+
+parser code {:
+	 
+	boolean errorDetected = false;
+	
+	Logger log = Logger.getLogger(getClass());
+   
+   
+    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
+     
+     //poziva se kad ne mozemo da nastavimo parsiranje
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);  
+    }
+  
+  //tu mozemo da se oporavimo i nastavimo
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSintaksna greska", cur_token);  
+    }
+  
+    //ne moze da se oporavi, zaustavlja se dalje
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+    }
+
+    //pomocu string buildera pravimo nasu poruku za ispis
+    //pomocu atributa left uzimamo inf o liniji
+    //onda se u log ispisuje poruka o gresci 
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left);  
+        log.error(msg.toString());       
+    }
+    
+    public void report_info(String message, Object info) {
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left);
+        log.info(msg.toString());
+    }
+    
+:}
+
+init with {:
+	errorDetected = false;
+:}
+
+
+
+/*ako zelimo da presretnemo dohvatanje svakog tokena. Ovde je cilj
+  da parser dohvati token od leksera i da onda ispisemo o kom 
+  simbolu je rec */  
+scan with {:
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+
+
+
+terminal PROGRAM, CONST, READ, PRINT, VOID, RETURN;
+terminal SEMI, COMMA;
+terminal LEFTPAREN, RIGHTPAREN, LEFTBRACE, RIGHTBRACE, LEFTSQUAREBRACE, RIGHTSQUAREBRACE;
+terminal PLUSPLUS, MINUSMINUS, DOTDOT, QUESTION, NEW, DOT, PLUS, MINUS, MUL, DIV, MOD;
+terminal AND, OR;
+terminal EQUAL, EQUALEQUAL, NOTEQUAL, GREATER, GREATEREQUAL, LESS, LESSEQUAL;
+terminal BREAK, CONTINUE;
+terminal IF, ELSE;
+
+
+terminal String IDENT;
+terminal Integer CONSTANTNUM;
+terminal Character CONSTANTCHAR;
+terminal Integer CONSTANTBOOL; 
+ 
+//terminal CONSTANTSTRING ;
+//terminal INTERFACE, ENUM, EXTENDS;
+//terminal FOR, CLASS;
+
+
+
+nonterminal Program,  ProgramDeclList, ProgramDecl ;
+nonterminal ConstDecl, ConstDeclList, ConstDeclValue; 
+nonterminal VarDecl, VarDeclList, VarDeclFormList;
+nonterminal MethodDeclList, MethodDecl, MethodType;
+nonterminal StatementList;
+nonterminal DesignatorStatement;
+nonterminal Assignop,  Relop;
+
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, ConstValue;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr, ExprIzraz, Term, Factor, Type;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj VarDeclForm, DesignatorArrayName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodTypeAndName, FormDecl, FormPars;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Addop, Mulop;
+nonterminal java.util.List DesignStmActPars, ActPars;
+nonterminal Expr1, Minus;
+
+nonterminal IfPart, ElsePart, ForDesignator, ForCondition;
+nonterminal ActualPars, ActualParamList;
+//nonterminal EnumDecl, EnumDeclInside, EnumDeclIn;
+//nonterminal InterfaceDecl, InterfaceMethodDeclList, InterfaceMethodDecl,  ClassDecl ;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConditionUslov, Condition, CondTerm, CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Statement, Matched, Unmatched, IfElseStm;
+nonterminal If, Else;
+nonterminal LeftParen, RightParen ;
+
+precedence left ELSE;
+
+/* --------------------------------------------------------------------------------------------------------------- */
+/*  Program = "program" ident {ConstDecl | VarDecl | ClassDecl | EnumDecl | InterfaceDecl} "{" {MethodDecl} "}"    */
+/* --------------------------------------------------------------------------------------------------------------- */
+
+Program ::= (Program) PROGRAM ProgramName ProgramDeclList LEFTBRACE MethodDeclList RIGHTBRACE ;
+
+ProgramName ::= (ProgramName) IDENT:name ;
+
+ProgramDeclList ::= (ProgramDeclListSome) ProgramDeclList ProgramDecl
+                    |
+                    (ProgramDeclListNone) /* epsilon */
+                    ;                 
+                    
+ProgramDecl ::= (ProgramDeclConst)   ConstDecl
+                |
+                (ProgramDeclVar)     VarDecl
+//              |
+//              (ProgramDeclClass)   ClassDecl
+//              |
+//              (ProgramDeclEnum)    EnumDecl
+//              |
+//              (ProgramDeclInterface) InterfaceDecl
+                ;
+
+                    
+
+MethodDeclList ::= (MethodDeclListSome) MethodDeclList MethodDecl
+                   |
+                   (MethodDeclListNone) /* epsilon */
+                   ;
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------------ */
+/* ConstDecl = "const" Type ident"=" (numConst | charConst | boolConst) {, ident "="(numConst | charConst | boolConst)} ";" */
+/* ------------------------------------------------------------------------------------------------------------------------ */
+
+ConstDecl ::= (ConstDeclaration) CONST Type ConstDeclList SEMI ;
+
+ConstDeclList ::= (ConstDeclListOne) ConstDeclList COMMA ConstDeclValue
+                  |
+                  (ConstDeclListTwo) ConstDeclValue
+                  ;
+
+ConstDeclValue ::= (ConstDeclValue) IDENT EQUAL ConstValue ;
+
+ConstValue ::= (ConstNumber)  CONSTANTNUM : numerickaConst 
+               |
+               (ConstChar)    CONSTANTCHAR :znakovnaConst
+               | 
+               (ConstBool)    CONSTANTBOOL :boolConst
+               ;
+
+
+
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------- */
+/* VarDecl = Type ident ["[" "]"] {"," ident ["[" "]"]} ";"                      */
+/* ----------------------------------------------------------------------------- */
+
+
+//samo ovo odkomentarisi
+VarDecl ::= (VarDeclaration) Type VarDeclFormList SEMI 
+//			|
+//			error SEMI:l
+//			{: parser.report_error ("(Definicija globalne promenljive) - Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+			;
+
+VarDeclFormList ::= (VarDeclFormListOne) VarDeclFormList COMMA VarDeclForm
+				
+                |
+                (VarDeclFormListTwo) VarDeclForm
+//                |
+//                error:l 
+//                {: parser.report_error("(Definicija globalne promenljive)- Izvrsen oporavak od greske do sledeceg , pocevsi od linije "+ lleft ,null);:}
+                ;
+
+VarDeclForm ::=   (VarDeclFormItem)  IDENT
+                  |
+                  (VarDeclFormArray) IDENT LEFTSQUAREBRACE RIGHTSQUAREBRACE
+                  ;
+
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------  */
+/* InterfaceDecl  =  "interface" ident "{" {InterfaceMethodDeclList} "}"                     */
+/* ----------------------------------------------------------------------------------------  */
+//
+//InterfaceDecl ::= (InterfDecl) INTERFACE  IDENT LEFTBRACE InterfaceMethodDeclList RIGHTBRACE
+//			  ;
+//
+//InterfaceMethodDeclList ::= (ProgramInterfDeclList)    InterfaceMethodDeclList InterfaceMethodDecl
+//			                |
+//			 			    (ProgramNoInterfDeclList)  /* epsilon */
+//			  			    ;
+
+
+
+/* ----------------------------------------------------------------------------------------  */
+/* InterfaceMethodDecl  =  (Type|"void") ident "(" [FormPars] ")"                            */
+/* ----------------------------------------------------------------------------------------  */
+//
+//InterfaceMethodDecl ::=  (InterfMethDeclOne)	    Type IDENT LEFTPAREN RIGHTPAREN 
+//						|  (InterfMethDeclTwo)	    VOID IDENT LEFTPAREN RIGHTPAREN 
+//						|  (InterfMethDeclThree)	Type IDENT LEFTPAREN FormPars RIGHTPAREN 
+//						|  (InterfMethDeclFour)  	VOID IDENT LEFTPAREN FormPars RIGHTPAREN 
+//						;
+
+
+
+
+/* ----------------------------------------------------------------------------------------  */
+/* MethodDecl = (Type | "void") ident "(" [FormPars] ")" {VarDecl} "{" {Statement} "}".                         */
+/* ----------------------------------------------------------------------------------------  */
+
+VarDeclList ::=	VarDeclList VarDecl
+				|
+				/* e */
+				;
+				
+MethodDecl ::=             (MethDeclNoPars)	    MethodTypeAndName LEFTPAREN RIGHTPAREN VarDeclList LEFTBRACE StatementList RIGHTBRACE
+						|  (MethDeclWithPars)  	MethodTypeAndName LEFTPAREN FormPars RIGHTPAREN VarDeclList LEFTBRACE StatementList RIGHTBRACE
+						;
+
+MethodTypeAndName ::=	(MethodTypeAndName) MethodType IDENT:imeMetode;
+
+MethodType ::=			(MethodTypeType) Type
+						|
+						(MethodTypeVOID) VOID
+						;
+						
+
+
+
+/* -----------------------------------------------------------------------------  */
+/* FormPars = Type ident ["[" "]"] {"," ident ["[" "]"]}                          */
+/* -----------------------------------------------------------------------------  */
+
+FormPars ::=    (FormParsOne) FormPars COMMA FormDecl
+                |
+                (FormParsTwo) FormDecl
+                ;
+
+FormDecl ::=   (FormParsItem)  Type IDENT
+               |
+               (FormParsArray) Type IDENT LEFTSQUAREBRACE RIGHTSQUAREBRACE
+               ;
+
+
+
+
+
+/* -------------------------------------------- */
+/* Type  = IDENT.                               */
+/* -------------------------------------------- */
+
+Type ::= (TypeIdent) IDENT
+		;
+
+
+
+/* -------------------------------------------------------------------------------------------------- */
+/* Statement = DesignatorStatement ";"                                							      */
+/*           | "if"  "(" Condition ")" Statement ["else" Statement ] 								  */
+/*           | "do" Statement "while" "(" Condition ")" ";" 							              */
+/*           | "switch"  "(" Expr ")" "{" {"case" numConst ":" {Statement} } "}"  					  */
+/*           | "for" "(" [DesignatorStatement] ";" [Condition] ";" [DesignatorStatement] ")" Statement*/
+/*           | "break" ";"                                           								  */
+/*           | "continue" ";"                                         								  */
+/*           | "return" [Expr] ";"                                    								  */
+/*           | "read" "(" Designator ")" ";"                          								  */
+/*           | "print" "(" Expr ["," numConst] ")" ";"                								  */
+/*           | "{" {Statement} "}"                                   								  */
+/* -------------------------------------------------------------------------------------------------- */
+
+If	  ::=  (If) IF;
+
+Else  ::=  (Else) ELSE;
+
+Statement 	::=  (StatementMatched)   Matched
+			     |	
+			     (StatementUnmatched) Unmatched
+			     ;
+					
+					
+Unmatched	::=  (UnmatchedIf)   If ConditionUslov Statement
+			     |	
+				 (UnmatchedElse) If ConditionUslov Matched Else Unmatched
+				 ; 
+				 
+//ovo radi
+Matched   ::= (StatementDesignator) DesignatorStatement SEMI
+//			  |
+//			  error SEMI:l
+//			  {: parser.report_error ("(Konstrukcija iskaza dodele) - Izvrsen oporavak do ; u liniji " + lleft, null);  :}
+              |
+//            (Statement_DoWhile)   FOR LEFTPAREN ForDesignator SEMI ForCondition SEMI ForDesignator RIGHTPAREN Statement
+//            |
+              (StatementBreak)      BREAK SEMI
+              |
+              (StatementContinue)   CONTINUE SEMI
+              | 
+              (StatementRetOne)     RETURN Expr SEMI
+              | 
+              (StatementRetTwo)     RETURN SEMI
+              |
+              (StatementRead)       READ LEFTPAREN Designator RIGHTPAREN SEMI
+              |
+              (StatementPrintOne)   PRINT LEFTPAREN Expr RIGHTPAREN SEMI
+              |
+              (StatementPrintTwo)   PRINT LEFTPAREN Expr COMMA CONSTANTNUM RIGHTPAREN SEMI
+              |
+              (StatementStList)     LEFTBRACE StatementList RIGHTBRACE
+              |
+              (StatementIf)         If ConditionUslov Matched  Else  Matched
+              ;
+              
+
+              
+StatementList ::= (StatementListSome) StatementList Statement
+                  |
+                  (StatementListNone) /* epsilon */
+                  ;
+            
+              
+//ForDesignator ::=  (ForDesignatorSome) DesignatorStatement
+//                   |
+//                   (ForDesignatorNone) /* epsilon */
+//                   ;
+                   
+//ForCondition ::=   (ForConditionSome) Condition
+//                   |
+//                   (ForConditionNone) /* epsilon */
+//                   ;
+
+
+
+/* ------------------------------------------------------------------------------       */
+/* DesignatorStatement = Designator (Assignop Expr | "(" [ActPars] ")" | "++" | "--")   */
+/* ------------------------------------------------------------------------------       */
+DesignatorStatement ::= (DesignatorStatement_Assign) Designator Assignop Expr 
+                        |
+                        (DesignatorStatement_Func)   Designator LEFTPAREN DesignStmActPars RIGHTPAREN 
+                        |
+                        (DesignatorStatement_Inc)    Designator PLUSPLUS 
+                        |
+                        (DesignatorStatement_Dec)    Designator MINUSMINUS 
+                        ;
+                        
+
+DesignStmActPars ::= (DesignStmActParsSome) ActPars
+                     |
+                     (DesignStmActParsNone) /* epsilon */
+                     ;
+
+/* ------------------------------------------------------------------------------       */
+/* ActPars = Expr { "," Expr }                                                          */
+/* ------------------------------------------------------------------------------       */
+ActPars ::= (ActParsUmpth) ActPars COMMA Expr
+			|
+			(ActParsFirst) Expr
+			;
+
+
+
+
+
+ConditionUslov ::=	 (ConditionUslov) LEFTPAREN  Condition  RIGHTPAREN;
+
+
+Condition 	::= (ConditionTwoOR)   Condition OR CondTerm
+			|   (ConditionOneOR)   CondTerm;
+
+CondTerm	::= (CondTermTwoAND)   CondTerm AND CondFact
+			|	(CondTermOneAND)   CondFact;
+
+CondFact 	::= (CondFactTwoExpr)  Expr Relop Expr
+			|   (CondFactOneExpr)  Expr;
+	
+
+
+
+/* --------------------------------------------  */
+/* Condition  = CondTerm  {"||" CondTerm}        */
+/* --------------------------------------------  */
+
+//Condition ::= (CondOr)  Condition OR CondTerm
+//	|           (Cond)    CondTerm
+//	;
+
+
+/* -------------------------------------------- */
+/* CondTerm  = CondFact  {"&&" CondFact}        */
+/* -------------------------------------------- */
+
+//CondTerm ::= (CondAnd)   CondTerm AND CondFact
+//	|          (CondTermFact)      CondFact
+//	;
+
+
+/* -------------------------------------------- */
+/* CondFact  = Expr [Relop Expr]                */
+/* -------------------------------------------- */
+
+//CondFact ::= (CondFactOne)   Expr
+//	|	       (CondFactTwo)   Expr Relop Expr
+//	;
+
+
+
+
+
+
+/* --------------------------------------------  */
+/* Expr  = ["-"] Term {Addop Term}               */
+/*		   | Condition "?" Expr ":" Expr  - B, C */
+/*   	   | CondFact  "?" Expr ":" Expr. - A    */
+/* --------------------------------------------  */
+
+//Expr ::= (NegExprList) MINUS ExprIzraz
+//	|	 (ExprList)    ExprIzraz
+//	;
+	
+
+	
+//ExprIzraz ::= (ExprAddopTerm)  ExprIzraz Addop Term
+//	|         (ExprTerm)   Term
+//	;
+
+Expr ::= (ExprI) ExprIzraz;
+	
+
+	
+ExprIzraz ::= (ExprAddopTerm)  ExprIzraz Addop Term
+	|         (ExprTerm)   Term
+	|         (NegExprTerm) MINUS Term
+	;
+
+
+
+
+/* -------------------------------------------- */
+/* Term  = Factor  {Mulop Factor}               */
+/* -------------------------------------------- */
+
+Term ::= (TermMulopFactor)   Term Mulop Factor
+	|    (TermFactor)  Factor
+	;
+
+
+/* -------------------------------------------- */
+/* Factor  = Designator ["(" [ActPars] ")"]     */
+/*           | numConst                         */
+/*           | charConst                        */
+/*           | boolConst                        */
+/*           | "new" Type [ "[" Expr "]" ]      */
+/*           | "(" Expr ")" .                   */
+/* -------------------------------------------- */
+ 
+Factor ::=     (FactorConstNum)       CONSTANTNUM
+		   |   (FactorConstChar)  	  CONSTANTCHAR
+		   |   (FactorConstBool)  	  CONSTANTBOOL
+		   |   (FactorParen)      LEFTPAREN Expr RIGHTPAREN
+           |   (FactorDesignOne)  Designator
+           |   (FactorDesignTwo)  Designator LEFTPAREN  DesignStmActPars RIGHTPAREN 
+           |   (FactTypeTwo)      NEW Type LEFTSQUAREBRACE Expr RIGHTSQUAREBRACE
+           ;
+           
+
+
+
+/* --------------------------------------------  */
+/* Designator = ident {"." ident | "[" Expr "]"} */
+/* --------------------------------------------  */
+
+Designator ::=    (DesignIdentifikator) IDENT
+			   |  (DesignEnum) IDENT DOT IDENT
+               |  (DesignNiz) DesignatorArrayName LEFTSQUAREBRACE  Expr RIGHTSQUAREBRACE
+               ;
+
+DesignatorArrayName ::= (DesignArrayName) IDENT;
+
+
+
+/* -------------------------------------------- */
+/* Assignop  = "=".                             */
+/* -------------------------------------------- */
+
+Assignop ::= (AssignEqual) EQUAL
+		;
+	
+
+
+/* -------------------------------------------- */
+/* Relop  = "+" | "-".                          */
+/* -------------------------------------------- */
+
+Relop ::= (RelopEqEq)  EQUALEQUAL 
+		| (RelopNotEq) NOTEQUAL
+		| (RelopGr)    GREATER
+		| (RelopGrEq)  GREATEREQUAL
+		| (RelopLs)    LESS
+		| (RelopLsEq)  LESSEQUAL
+		;
+
+
+/* -------------------------------------------- */
+/* Addop  = "+" | "-".                          */
+/* -------------------------------------------- */
+
+Addop ::= (AddopPlus) PLUS 
+		| (AddopMinus) MINUS
+		;
+
+	
+	
+		
+/* -------------------------------------------- */
+/* Mulop  = "*" | "/" | "%".                    */
+/* -------------------------------------------- */
+
+Mulop ::= (MulopMul) MUL 
+		| (MulopDiv) DIV
+		| (MulopMod) MOD
+		;

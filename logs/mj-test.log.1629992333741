@@ -1,0 +1,32 @@
+INFO  17:38:43,906 - Compiling source file: C:\Users\tijana.djokic\Desktop\P1\MJCompilerNovo2\test\program.mj
+INFO  17:38:43,957 - #2 program
+INFO  17:38:43,957 - #40 test301
+INFO  17:38:43,957 - #3 const
+INFO  17:38:43,959 - #40 int
+INFO  17:38:43,959 - #40 nula
+INFO  17:38:43,959 - #29 =
+INFO  17:38:43,959 - #41 0
+INFO  17:38:43,959 - #8 ;
+INFO  17:38:43,960 - #3 const
+INFO  17:38:43,960 - #40 int
+INFO  17:38:43,961 - #40 jedan
+INFO  17:38:43,961 - #29 =
+INFO  17:38:43,961 - #41 1
+INFO  17:38:43,961 - #8 ;
+INFO  17:38:43,961 - #3 const
+INFO  17:38:43,961 - #40 int
+INFO  17:38:43,961 - #40 pet
+INFO  17:38:43,961 - #29 =
+INFO  17:38:43,961 - #41 5
+INFO  17:38:43,961 - #8 ;
+INFO  17:38:43,961 - #40 int
+INFO  17:38:43,970 - #40 niz
+INFO  17:38:43,970 - #14 [
+INFO  17:38:43,970 - #15 ]
+INFO  17:38:43,970 - #9 ,
+INFO  17:38:43,970 - #40 a
+INFO  17:38:43,970 - #14 [
+INFO  17:38:43,970 - #8 ;
+ERROR 17:38:43,971 - 
+Sintaksna greska na liniji 9
+ERROR 17:38:43,971 - Fatalna greska, parsiranje se ne moze nastaviti na liniji 9
