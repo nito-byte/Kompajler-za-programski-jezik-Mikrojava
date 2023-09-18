@@ -27,27 +27,23 @@ parser code {:
 	Logger log = Logger.getLogger(getClass());
    
    
-    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
-     
-     //poziva se kad ne mozemo da nastavimo parsiranje
+   
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
       done_parsing();
       report_error(message, info);  
     }
   
-  //tu mozemo da se oporavimo i nastavimo
+ 
     public void syntax_error(Symbol cur_token) {
         report_error("\nSintaksna greska", cur_token);  
     }
   
-    //ne moze da se oporavi, zaustavlja se dalje
+    
     public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
         report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
     }
 
-    //pomocu string buildera pravimo nasu poruku za ispis
-    //pomocu atributa left uzimamo inf o liniji
-    //onda se u log ispisuje poruka o gresci 
+    
     public void report_error(String message, Object info) {
     	errorDetected = true;
     	StringBuilder msg = new StringBuilder(message); 
@@ -349,7 +345,7 @@ Unmatched	::=  (UnmatchedIf)   If:I1 ConditionUslov:C2 Statement:S3 {: RESULT=ne
 				 (UnmatchedElse) If:I1 ConditionUslov:C2 Matched:M3 Else:E4 Unmatched:U5 {: RESULT=new UnmatchedElse(I1, C2, M3, E4, U5); RESULT.setLine(I1left); :}
 				 ; 
 				 
-//ovo radi
+
 Matched   ::= (StatementDesignator) DesignatorStatement:D1 SEMI {: RESULT=new StatementDesignator(D1); RESULT.setLine(D1left); :}
 //			  |
 //			  error SEMI:l

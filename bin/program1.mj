@@ -1,5 +1,3 @@
-// primer koji sadrzi oporavak od sintaksne greske i leksicke greske 
-// (definicija globalne promenljive, i konstrukcija iskaza dodele - oporavak od greske)
 program MJProgram
 	int x, int y;
 {

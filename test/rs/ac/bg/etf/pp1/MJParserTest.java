@@ -57,8 +57,7 @@ public class MJParserTest {
 			
 			//if (!p.errorDetected && !sem.errorDetected) {
 			if (!p.errorDetected && v.passed()) {
-				//ovde bi trebalo da nam se kod napunio u codeBufferu i sad treba da ga saspemo
-				//u izlazni fajl.
+				
 				File objFile = new File("test/program.obj");
 	        	log.info("Generating bytecode file: " + objFile.getAbsolutePath());
 	        	if (objFile.exists())

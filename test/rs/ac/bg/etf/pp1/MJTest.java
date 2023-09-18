@@ -26,20 +26,20 @@ public class MJTest {
 		try {
 		
 			
-			File sourceCode = new File("test/program.mj");	                    //uzimamo njega
-			log.info("Compiling source file: " + sourceCode.getAbsolutePath()); //ova poruka ide i na fajl i konzolu
+			File sourceCode = new File("test/program.mj");	                    
+			log.info("Compiling source file: " + sourceCode.getAbsolutePath()); 
 			
 			br = new BufferedReader(new FileReader(sourceCode));
 			
 			Yylex lexer = new Yylex(br);
 			Symbol currToken = null;
-			while ((currToken = lexer.next_token()).sym != sym.EOF) {			//dohvatamo po jedan token programa
+			while ((currToken = lexer.next_token()).sym != sym.EOF) {			
 				if (currToken != null && currToken.value != null)
-					log.info(currToken.toString() + " " + currToken.value.toString()); //ispisuje se u log fajl token
+					log.info(currToken.toString() + " " + currToken.value.toString()); 
 			}
 		} 
 		finally {
-			// ovaj blok se izvrsi svakako
+			
 			if (br != null) try { br.close(); } catch (IOException e1) { log.error(e1.getMessage(), e1); }
 		}
 	}

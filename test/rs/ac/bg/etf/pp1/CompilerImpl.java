@@ -32,13 +32,7 @@ public class CompilerImpl implements Compiler {
 		Log4JUtils.instance().prepareLogFile(Logger.getRootLogger());
 	}
 
-// Treba implementirati interfejs Compiler (dat u prilozenoj arhivi). Metoda prima kao argumente putanju do ulaznog fajla
-// koji sadrzi kod koji se kompajlira i putanju do izlaznog fajla u koji treba smestiti generisani bajtkod. Povratna vr
-// metode je lista CompilerError objekata. U slucaju uspesnog kompajliranja i generisanja koda, vraca se null ili prazna lista.
 
-// Klasa CompilerError opisuje greske do kojih je moguce doci prilikom kompajliranja.Nabrajanje (enum) CompilerErrorType 
-// predvidja postojanje leksicke, sintaksne i semanticke greške. Prilikom kreiranja greske zadaje se i linija na kojoj je
-// greska otkrivena, kao i opis greske.
 
 	public boolean sintaksnaGreskaPoruka = false;
 
@@ -98,7 +92,7 @@ public class CompilerImpl implements Compiler {
 
 		}
 
-		// ovde sada treba da nadovezem 3 liste i da vratim tu listu+
+		
 		List<CompilerError> combined = new ArrayList<CompilerError>();
 		combined.addAll(listLex);
 		combined.addAll(listSin);
@@ -184,7 +178,7 @@ public class CompilerImpl implements Compiler {
 			int redGreske = s.left;
 			String ss = log.toString();
 			int red = lexer.next_token().left;
-			//int red = p.cur_token.left;  - ovo ce biti sledeci red posle greske??
+			
 			if (p.errorDetected) {
 
 				CompilerErrorType type = CompilerErrorType.SYNTAX_ERROR;

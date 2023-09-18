@@ -45,7 +45,7 @@ public class SemanticCheck extends VisitorAdaptor {
 			msg.append(" na liniji ").append(line);
 		log.error(msg.toString());
 		
-		//ovde cu sada da ubacim logovanje errora u moj niz
+		
 		listaSemantickihGresaka.add(msg.toString());
 	}
 
@@ -67,9 +67,7 @@ public class SemanticCheck extends VisitorAdaptor {
 	
 	@Override
 	public void visit(ProgramName programName) {
-		// kreiramo inicijalni opseg sa tipovima
-		// kreiramo objektni cvor
-		// necemo otvarati novi scope jer je on vec otvoren
+
 		String name = programName.getName();
 		Obj pom;
 
@@ -82,8 +80,7 @@ public class SemanticCheck extends VisitorAdaptor {
 	@Override
 	public void visit(Program program) {
 		nVars = Tab.currentScope.getnVars();
-		// treba na kraju da ulancam u onaj obj cvor
-		// treba da zatvorim scope
+
 		Obj objektniCvor = program.getProgramName().obj;
 		Tab2.chainLocalSymbols(objektniCvor);
 		Tab2.closeScope();
@@ -93,10 +90,8 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(TypeIdent TypeIdent) {
-		// treba da dohvatim naziv tipa
-		// treba da proverim da li taj tip vec postoji u init opsegu
-		// i onda treba da proverim ako postoji da li je to stvarno tip
-		currentType = Tab2.noType; // da bi pregazili prethodnu vrednost
+
+		currentType = Tab2.noType; 
 		String typeName = TypeIdent.getI1();
 		Obj typeObj = Tab2.find(typeName);
 		if (typeObj == Tab2.noObj) {
@@ -109,17 +104,14 @@ public class SemanticCheck extends VisitorAdaptor {
 			}
 		}
 		TypeIdent.struct = currentType;
-		// int x;
-		// alksdlaksd x;
-		// main x;
+		
 	}
 
 	// ***************************************************************************************//
 
 	@Override
 	public void visit(VarDeclFormItem VarDeclFormItem) {
-		// provera da li je vec u scope-u
-		// ako nije dodajem, ako jeste error
+
 		VarDeclFormItem.obj = Tab.noObj;
 		String name = VarDeclFormItem.getI1();
 		if (Tab2.currentScope().findSymbol(name) != null) {
@@ -136,8 +128,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(VarDeclFormArray VarDeclFormArray) {
-		// proverim da li je deklarisana
-		// ako jeste greska, ako nije insert u TS
+
 
 		VarDeclFormArray.obj = Tab.noObj;
 		String name = VarDeclFormArray.getI1();
@@ -162,8 +153,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(ConstNumber ConstNumber) {
-		// treba da dohvatim vrednost konstante i da je ubacim u
-		// objektni cvor na tom nivou, pa cu vrednost preneti u cvor navise
+
 		int adr = ConstNumber.getNumerickaConst();
 		ConstNumber.obj = new Obj(Obj.NO_VALUE, "", Tab2.intType);
 		ConstNumber.obj.setAdr(adr);
@@ -172,8 +162,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(ConstChar ConstChar) {
-		// dohvatim vrednost konstante
-		// kreiram novi obj cvor i tu sacuvam vrednost koju cu prenositi
+
 		int adr = ConstChar.getZnakovnaConst();
 		ConstChar.obj = new Obj(Obj.NO_VALUE, "", Tab2.charType);
 		ConstChar.obj.setAdr(adr);
@@ -182,8 +171,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(ConstBool ConstBool) {
-		// treba da sacuvam bool vrednost u obj ispod, a onda da ga
-		// prenesem u obj jedan nivo iznad
+
 		int adr = ConstBool.getBoolConst();
 		ConstBool.obj = new Obj(Obj.NO_VALUE, "", Tab2.boolType);
 		ConstBool.obj.setAdr(adr);
@@ -192,8 +180,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(ConstDeclValue ConstDeclValue) {
-		// proverim da li se konstanta vec nalazi u TS i ako da greska, ako
-		// ne provera tipova da li su ekvivalentni na kraju sacuvam u .obj
+
 		String name = ConstDeclValue.getI1();
 		int adr = ConstDeclValue.getConstValue().obj.getAdr();
 
@@ -232,12 +219,12 @@ public class SemanticCheck extends VisitorAdaptor {
 		
 	@Override
 	public void visit(MethodTypeVOID MethodTypeVOID) {
-		//moram da postavim currentType, jer se tu ne obidje Type
+
 		currentType = Tab2.noType;
 	}
 	
 	
-	//moramo kad izadjemo iz metode da uzmemo i da ulancamo sve lok. promenljive
+
 	@Override
 	public void visit(MethDeclWithPars MethDeclWithPars) {
 		Tab2.chainLocalSymbols(currentMethod);
@@ -251,9 +238,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(MethDeclNoPars MethDeclNoPars) {
-		//ulancam lokalne simbole na  obj cvor metode
-		//zatvorim scope
-		//proverim da li postoji naredba return
+
 		Tab2.chainLocalSymbols(currentMethod);
 		Tab2.closeScope();
 		if (currentMethod.getType() != Tab.noType) {
@@ -267,8 +252,7 @@ public class SemanticCheck extends VisitorAdaptor {
 	
 	@Override
 	public void visit(FormParsItem FormParsItem) {
-		//dohvatim naziv formalnog parametra proverim da li vec postoji u 
-		//trenutnom scope-u, ako ne postoji onda ga dodajem u TS
+
 		String name = FormParsItem.getI2();
 		FormParsItem.obj = Tab.noObj;
 		if (Tab2.currentScope().findSymbol(name) != null) {
@@ -297,23 +281,19 @@ public class SemanticCheck extends VisitorAdaptor {
 	
 	@Override
 	public void visit(ActParsFirst ActParsFirst) {
-		//ovde ce se nalaziti prvi element u listi. Ono sto je jako bitno je da ce stablo 
-		//da se gradi od vrha ka dnu, ali da ce da se obilazni od dna ka vrhu. Znaci 
-		//poslednji dodati element ce biti prvi element i on ce da se nalazi skroz na dnu.
-		//
+
 		ActParsFirst.list = new ArrayList<Struct>();
 		ActParsFirst.list.add(ActParsFirst.getExpr().struct);
 	}
 	
-	//Sada treba da uzmem i da dodam ostatak, sve ostale expr u listu.
-	//Najpre treba da uzmem i da preuzmem listu koju sam napravila za prvi. 
+
 	@Override
 	public void visit(ActParsUmpth ActParsUmpth) {
 		ActParsUmpth.list = ActParsUmpth.getActPars().list;
 		ActParsUmpth.list.add(ActParsUmpth.getExpr().struct);
 	}
 	
-	//ovde nece biti nikakvih parametara, zato treba da je tu prazna lista
+	
 	@Override
 	public void visit(DesignStmActParsNone DesignStmActParsNone) {
 		DesignStmActParsNone.list = new ArrayList<Struct>();
@@ -324,8 +304,7 @@ public class SemanticCheck extends VisitorAdaptor {
 		DesignStmActParsSome.list = DesignStmActParsSome.getActPars().list;
 	}
 	
-	//************************************************************************//
-	//OVAJ DEO PROVERIIIIIIIII!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
 	
 	@Override
 	public void visit(FactorDesignTwo FactorDesignTwo) {
@@ -429,9 +408,7 @@ public class SemanticCheck extends VisitorAdaptor {
 	}
 		
 	
-	//DesignatorStatement = Designator Assignop Expr ";"
-	//- Designator mora oznacavati promenljivu, element niza ili polje unutar objekta.
-	//- Tip neterminala Expr mora biti kompatibilan pri dodeli sa tipom neterminala Designator.
+
 	@Override
 	public void visit(DesignatorStatement_Assign DesignatorStatement_Assign) {
 		Obj designator = DesignatorStatement_Assign.getDesignator().obj;
@@ -570,8 +547,7 @@ public class SemanticCheck extends VisitorAdaptor {
 	// ***********************************************************************************//
 	// factor-i 
 	
-	//moram imati informaciju o tome kog su tipa, jer je Expr->Term->Fact
-	//pa posle kad budem proveravala tipove u Expr-u ce mi trebati to
+	
 	@Override
 	public void visit(FactorConstNum FactorConstNum) {
 		FactorConstNum.struct = Tab.intType;
@@ -589,10 +565,7 @@ public class SemanticCheck extends VisitorAdaptor {
 	
 	@Override
 	public void visit(FactorDesignOne FactorDesignOne) {
-		//ovde se takodje samo pamti tip, jer je ovo samo koriscenje neke promenljive
-		//u ovom trenutku ja ne pravim nikakav objektni cvor. Ne moram ni da radim
-		//find jer sam sigurna da postoji vec ovo polje u ts, i u njegovom  cvoru 
-		//smo u obj zapamtili njegov objekat
+
 		FactorDesignOne.struct = FactorDesignOne.getDesignator().obj.getType();
 	}
 
@@ -617,8 +590,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	@Override
 	public void visit(TermFactor TermFactor) {
-		//ovde moram da postavim u termov struct kog je tipa ovaj term, jer ce se on koristiti
-		//dalje u Expr kada se tamo budu poredili tipovi
+
 		TermFactor.struct = TermFactor.getFactor().struct;
 	}
 
@@ -626,7 +598,7 @@ public class SemanticCheck extends VisitorAdaptor {
     // - Term i Factor moraju biti tipa int.
 	@Override
 	public void visit(TermMulopFactor TermMulopFactor) {
-		//moram da dohvatim tip Terma i tip Factora, a zatim treba da proverim da li su oba int
+
 		Struct term = TermMulopFactor.getTerm().struct;
 		Struct fact = TermMulopFactor.getFactor().struct;
 		if (term != Tab.intType) {
@@ -670,7 +642,7 @@ public class SemanticCheck extends VisitorAdaptor {
 
 	//----------------------------------------------------------------//
 	//Expr = Expr Addop Term.  ===> Expr i Term moraju biti tipa int. //
-	//U svakom slucaju, tipovi za Expr i Term moraju biti komatibilni.//
+	//U svakom slucaju, tipovi za Expr i Term moraju biti kompatibilni.//
 	//----------------------------------------------------------------//	
 	@Override
 	public void visit(ExprAddopTerm ExprAddopTerm) {

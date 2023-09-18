@@ -37,8 +37,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(VarDeclFormItem VarDeclFormItem){
-		//ovde sada treba da postavim globalnim promenljivama njihov redni broj
-		//i treba da postavim u Code sekciji polje dataSize - broj globalnih pr.
+		
 		Obj var = VarDeclFormItem.obj;
 		if (var.getLevel() == 0)
 			var.setAdr(Code.dataSize++);
@@ -46,8 +45,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(VarDeclFormArray VarDeclFormArray){
-		//ovde takodje treba da postavim u gl promenljivu njen redni broj
-		//a zatim treba da uvecam promenljivu koja govori koliko ih ima
+		
 		Obj var = VarDeclFormArray.obj;
 		if (var.getLevel() == 0)
 			var.setAdr(Code.dataSize++);
@@ -57,14 +55,10 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(StatementPrintOne StatementPrintOne) {
-		// Da bi mi radila instrukcija print moram da imam najpre dve vrednosti
-		// na steku: val, width. Vrednost val ce da mi se postavi kad zavrsim sa obilaskom
-		// cvora Expr. Ali ostaje mi da ja stavim sirinu (to procitam odavde) i da
-		// stavim odg opCode. Za njega gledam da li je tip od Expr int ili je char
+		
 		int len = 1;
 		if (StatementPrintOne.getExpr().struct == Tab2.intType || StatementPrintOne.getExpr().struct == Tab2.boolType)
-			len = 5; // dodala
-		//mislim da ovo nije dobro, osim ako ne puca error u semanticu
+			len = 5; 
 		Code.loadConst(len);
 		Code.put(StatementPrintOne.getExpr().struct == Tab2.charType ? Code.bprint : Code.print);
 	}
@@ -78,9 +72,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(StatementRead StatementRead) {
-		// ovde ne treba da imam nista na steku, treba samo da postavim
-		// objektni kod na bafer. A cuva se zato sto ce ta ucitana vrednost da
-		// se pojavi na steku, pa onda mora i da se skine sa steka.
+		
 		Code.put(StatementRead.getDesignator().obj.getType() == Tab.charType ? Code.bread : Code.read);
 		Code.store(StatementRead.getDesignator().obj);
 	}
@@ -89,31 +81,28 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(FactorConstNum FactorConstNum) {
-		// ovo ce biti neka vrednost int sa desne strane. To treba da uzmem i da
-		// sacuvam na steku kao neku konstantu
+		
 		int val = FactorConstNum.getC1().intValue();
 		Code.loadConst(val);
 	}
 
 	@Override
 	public void visit(FactorConstChar FactorConstChar) {
-		// Ovo je stavljanje char konstante na Expr stek.
+		
 		int val = FactorConstChar.getC1().charValue();
 		Code.loadConst(val);
 	}
 
 	@Override
 	public void visit(FactorConstBool FactorConstBool) {
-		// ovo je stavljanje bool konstante na stek sa load
+		
 		int val = FactorConstBool.getC1().intValue();
 		Code.loadConst(val);
 	}
 
 	@Override
 	public void visit(FactTypeTwo FactTypeTwo) {
-		// treba na steku da mi bude konstanta tj broj elemenata niza.
-		// Zatim treba da dohvatim tip da vidim da li je int ili nije
-		// new tip [broj]
+		
 		Code.put(Code.newarray);
 		int val = FactTypeTwo.getType().struct == Tab.charType ? 0 : 1;
 		Code.put(val);
@@ -126,8 +115,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override 
 	public void visit(FactorDesignOne FactorDesignOne){
-		//ovo je kada mi se u izrazu nadje i neka promenljiva npr: ...1+a;
-		//e pa meni je potrebno da se ovo a postavi na stek.
+		
 		Obj d = FactorDesignOne.getDesignator().obj;
 		Code.load(d);
 	}
@@ -136,24 +124,21 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(TermMulopFactor TermMulopFactor) {
-		// u ovo trenutku su mi vec i term i factor stavljeni preko factor na
-		// stek ostaje jos samo da stavim u baffer operacioni kod mulop operacije
+
 		int opcode = TermMulopFactor.getMulop().obj.getKind();
 		Code.put(opcode);
 	}
 
 	@Override
 	public void visit(ExprAddopTerm ExprAddopTerm) {
-		// u ovom trenutku ce oba terma biti na steku, tako da treba jos da
-		// postavim operacioni kod addop operacije
+
 		int opcode = ExprAddopTerm.getAddop().obj.getKind();
 		Code.put(opcode);
 	}
 
 	@Override
 	public void visit(NegExprTerm NegExprTerm) {
-		// meni ce Expr vec biti na steku. Treba da postavim operacioni kod za
-		// negaciju na stek
+
 		Code.put(Code.neg);
 	}
 	
@@ -161,22 +146,19 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit (DesignArrayName DesignArrayName){
-		//ovo je stavljanje desne strane niza na stek i to bez stavljanja
-		//indexa jer ce on bii stavljen na stek kroz expr
+
 		Code.load(DesignArrayName.obj);	
 	}
 
 	@Override
 	public void visit(DesignatorStatement_Assign DesignatorStatement_Assign) {
-		// Expr se vec nalazi na steku, sada treba to sa steka da uzmem i da
-		// sacuvam u promenljivoj Designator
+
 		Code.store(DesignatorStatement_Assign.getDesignator().obj);
 	}
 	
 	@Override
 	public void visit (DesignatorStatement_Dec DesignatorStatement_Dec){
-		//za Desig koji nije tipa array nemamo nista na steku, nego treba da sami stavimo
-		//za Desig koji je tipa array imamo stavljen load, i imamo kroz expr stavljen index
+
 		Obj d = DesignatorStatement_Dec.getDesignator().obj;
 		if (d.getKind() == Obj.Elem) {
 			Code.put(Code.dup2);
@@ -205,16 +187,14 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit (MethDeclNoPars MethDeclNoPars){
-		//na zavrsetku ove smene nama se zavrsava metoda (izlazimo iz nje) i onda
-		//treba da stavimo na stek exit i return
+
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 	}
 	
 	@Override
 	public void visit(MethDeclWithPars MethDeclWithPars){
-		//ovde se takodje nalazimo kada smo zavrsili sa metodom i onda da bismo
-		//izasli treba na stek da stavimo exit i return
+
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 	}
@@ -415,40 +395,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	}
 
 	
-	/*
 	
-	//kako funkcionisu stvari sa proveravanjem uslova:
-	//ono sto treba da se radi je da na na stek stavimo parametre koji ce da 
-	//ucestvuju u proveri. Npr ako imamo 2>3 treba da mi se prvo na steku nadju 
-	//ti parametri 2 i 3. Zatim mi treba operacioni kod operacije koja ce da se
-	//proverava i radim FalseJump u situaciji kada nije ispunjen uslov.
-	
-	
-	
-	//(CondFactOneExpr)  Expr;
-	//ovo je situacija kada je u if-u if(1); if(false)...
-	//Tada treba da uzmem i da postavim na stek vrednost sa kojom poredim (1)
-	//i treba da stavim op kod u falseJmp
-	@Override
-	public void visit(CondFactOneExpr CondFactOneExpr){
-		int konstanta = Code.const_1;
-		int opCodeEqual = Code.eq;
-		Code.put(konstanta);
-		Code.putFalseJump(opCodeEqual, 0);
-	}
-	
-	//(CondFactTwoExpr)  Expr Relop Expr
-	//ovde ce mi vec biti oba Expr na steku, treba jos samo da postavim opCode
-	//za falseJump
-	@Override
-	public void visit (CondFactTwoExpr CondFactTwoExpr){
-		//ovde ce mi sada biti oba expr na steku, treba jos samo da stavim obrnuti tj
-		//false jmp na stek i 0. Tek posle kad se popnem po smenama gore cu ja da 
-		//uzmem i da zapamtim adresu na koju treba da se vratim 
-		postaviRelop(CondFactTwoExpr.getRelop());
-	}
-	
-	*/
 	
 	
 
